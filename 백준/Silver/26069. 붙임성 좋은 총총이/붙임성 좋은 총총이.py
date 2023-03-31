@@ -4,17 +4,16 @@ read = sys.stdin.readline
 
 n = int(read())
 rainbow = set()
+rainbow.add('ChongChong')
 
 for _ in range(n):
     a,b = read().rstrip().split()
-    if a == 'ChongChong' or b == 'ChongChong':
-        if a not in rainbow or b not in rainbow:
-            rainbow.add(a)
-            rainbow.add(b)
+    if a in rainbow :
+        rainbow.add(b)
+    elif b in rainbow:
+        rainbow.add(a)
     else:
-        if a in rainbow or b in rainbow:
-            rainbow.add(a)
-            rainbow.add(b)
-
+        continue
+        
 print(len(rainbow))
 
