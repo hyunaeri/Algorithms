@@ -1,28 +1,11 @@
-# 백준 1439 뒤집기
 import sys
-read = sys.stdin.readline
+s = list(map(int, sys.stdin.readline().strip()))
 
-S = read().rstrip()
+cnt = 0
+# 반복문을 통해 문자열을 확인
+for i in range(len(s) - 1):
+    # 현재 문자와 다음 문자가 다르면 카운트
+    if s[i] != s[i + 1]:
+        cnt += 1
 
-# 0과 1로 이루어진 그룹의 수
-cnt_0 = 0
-cnt_1 = 0
-
-# 기준 문자
-check = S[0]
-if check == '0':
-    cnt_0 += 1
-elif check == '1':
-    cnt_1 += 1
-
-for i in range(1, len(S)):
-    if S[i] != check:
-        if S[i] == '0':
-            cnt_0 += 1
-        else:
-            cnt_1 += 1
-        check = S[i]
-
-print(min(cnt_0,cnt_1))
-
-
+print((cnt + 1) // 2)
