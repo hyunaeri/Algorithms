@@ -28,6 +28,10 @@ def dijkstra(start):
 
     while heap:
         dist, next = heapq.heappop(heap)
+        # 기존 최단거리보다 멀다면 무시 ㅋㅋ
+        if distance[next] < dist:
+            continue
+        
         for next_node, weight in data[next]:
             cost = dist + weight
             if cost < distance[next_node]:
