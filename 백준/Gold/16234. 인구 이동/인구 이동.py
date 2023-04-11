@@ -13,6 +13,8 @@ population = [ list(map(int,read().rstrip().split())) for _ in range(N) ]
 def open(x,y):
     queue = deque()
     queue.append((x,y))
+
+    # 국경선을 공유하고 있는 나라들을 temp 배열에 담는다.
     temp = []
     temp.append((x,y))
     visited[x][y] = 1
@@ -40,6 +42,7 @@ def open(x,y):
 answer = 0
 while True:
     visited = [ [0]*N for _ in range(N) ]
+    # 디폴트: 국경선은 닫혀있음.
     check = 0
 
     for i in range(N):
@@ -48,6 +51,7 @@ while True:
                 country = open(i,j)
                 # 연합 구축
                 if len(country) > 1 : 
+                    # 국경선이 열림.
                     check = 1
                     # 연합을 이루고 있는 각 칸의 인구수는 (연합의 인구수) / (연합을 이루고 있는 칸의 개수)가 된다. 편의상 소수점은 버린다.
                     p = sum([population[x][y] for x,y in country]) // len(country)
@@ -55,7 +59,7 @@ while True:
                     for x, y in country:
                         population[x][y] = p
 
-    # 연합이 없으므로 모든 국경선을 닫는다.
+    # 국경선이 닫혀 있으므로 더이상의 인구이동은 발생하지 않음.
     if check == 0:  
         break
     
