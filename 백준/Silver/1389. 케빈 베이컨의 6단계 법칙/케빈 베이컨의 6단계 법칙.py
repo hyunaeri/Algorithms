@@ -11,6 +11,7 @@ visited = [ 0 for _ in range(N+1) ]
 # print(visited)
 
 def bfs(x,target):
+    visited = [ 0 for _ in range(N+1) ]
     queue = deque()
     queue.append(x)
 
@@ -32,7 +33,6 @@ for _ in range(M):
 for i in range(1,N+1):
     sum = 0
     for j in range(1,N+1):
-        visited = [ 0 for _ in range(N+1) ]
         sum += bfs(i,j)
     kevin[i] = sum
 
