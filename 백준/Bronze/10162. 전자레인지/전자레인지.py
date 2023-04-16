@@ -2,26 +2,12 @@
 import sys
 read= sys.stdin.readline
 
-T = int(read())
-button = dict()
-button[300], button[60], button[10] = 0, 0, 0
-cnt = 0
+n = int(input())
 
-while True:
-    if T >= 300:
-        button[300] += 1
-        T -= 300
-    elif 60 <= T < 300:
-        button[60] += 1
-        T -= 60
-    elif 10 <= T < 60:
-        button[10] += 1
-        T -= 10
-    else:
-        break
-
-if T ==0:
-    for value in button.values():
-        print(value, end=' ')
+if (n % 10) != 0:
+	print(-1)
+	
 else:
-    print(-1)
+	for i in [300, 60, 10]:
+		print(n//i, end=' ')
+		n = n%i
