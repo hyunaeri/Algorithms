@@ -9,7 +9,7 @@ read = sys.stdin.readline
 
 N = int(read())
 nums = list(map(int, read().rstrip().split()))
-LIS = [nums[0]]
+LIS = []
 
 def binary_search(target):
     start = 0
@@ -28,7 +28,7 @@ def binary_search(target):
     return start
 
 for n in nums:
-    if LIS[-1] < n:
+    if not LIS or LIS[-1] < n:
         LIS.append(n)
     else:
         LIS[binary_search(n)] = n
