@@ -11,7 +11,9 @@ stack = list()
 
 for i in range(len(S)):
     stack.append(S[i])
-    if stack[-length:] == list(explosion_str):
+    
+    # join 함수와 리스트 슬라이싱으로 만든 문자열이 폭발 문자열이랑 같으면
+    if ''.join(stack[-length:]) == explosion_str:
         for _ in range(length):
             stack.pop()
 
