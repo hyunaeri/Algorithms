@@ -3,12 +3,22 @@ import sys
 read = sys.stdin.readline
 
 E,S,M = map(int,read().split())
-answer = 1
+e,s,m,answer = 1,1,1,1
 
 while True:
-    if (answer - E) % 15 == 0 and (answer - S) % 28 == 0 and (answer - M) % 19 == 0:
+    if E == e and S == s and M == m:
         break
-
+    
+    e += 1
+    s += 1
+    m += 1
     answer += 1
+
+    if e == 16:
+        e = 1
+    if s == 29:
+        s = 1
+    if m == 20:
+        m = 1
 
 print(answer)
