@@ -1,8 +1,5 @@
 # 백준 9252 LCS 2(Longest Common Subsequece)
 # LCS(Longest Common Subsequece) : 최장 공통 부분 수열
-# DP 리스트 원소 값 자체를 문자열로 둬도 상관 없음.
-# 어자피 DP 리스트의 원소 길이가 LCS의 길이 값 이므로
-
 import sys
 read = sys.stdin.readline
 
@@ -21,4 +18,8 @@ for i in range(1, len(s1)+1):
                 dp[i][j] = dp[i][j-1]
 
 result = dp[-1][-1]
-print(len(result), result, sep = '\n')
+
+if len(result) != 0:
+    print(len(result), result, sep = '\n')
+else:
+    print(len(result))
