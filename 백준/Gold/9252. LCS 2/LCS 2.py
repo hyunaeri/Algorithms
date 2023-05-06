@@ -17,8 +17,7 @@ for i in range(1, len(s1)+1):
             else:
                 dp[i][j] = dp[i][j-1]
 
-result = dp[-1][-1]
-print(len(result))
+print(len(dp[-1][-1]))
 
-if len(result) != 0:
-    print(result)
+if len(dp[-1][-1]) != 0:
+    print(dp[-1][-1])
