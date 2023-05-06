@@ -18,8 +18,7 @@ for i in range(1, len(s1)+1):
                 dp[i][j] = dp[i][j-1]
 
 result = dp[-1][-1]
+print(len(result))
 
 if len(result) != 0:
-    print(len(result), result, sep = '\n')
-else:
-    print(len(result))
+    print(result)
