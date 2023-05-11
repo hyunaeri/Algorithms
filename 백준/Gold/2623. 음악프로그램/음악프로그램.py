@@ -15,7 +15,6 @@ def topology_sort():
     while queue:
         current = queue.popleft()
         result.append(current)
-        visited[current] = True
 
         # 현재 노드와 연결된 모든 노드의 진입차수 -1
         for next in graph[current]:
@@ -30,22 +29,17 @@ def topology_sort():
 N,M = map(int,read().split())
 indegree = [0] * (N+1)
 graph = [ [] for _ in range(N+1) ]
-visited = [True] + [False] * (N)
 
 for _ in range(M):
     broadcast = list(map(int,read().split()))
 
     for i in range(1, broadcast[0]):
-        for j in range(i+1, broadcast[0]+1):
-            if not broadcast[j] in graph[broadcast[i]]:
-                graph[broadcast[i]].append(broadcast[j])
-                indegree[broadcast[j]] += 1
+        graph[broadcast[i]].append(broadcast[i+1])
+        indegree[broadcast[i+1]] += 1
 
 answer = topology_sort()
 
-for v in visited:
-    if not v:
-        print(0)
-        exit()
-        
-print(*answer, sep =' ')
+if len(answer) == N:
+    print(*answer, sep =' ')
+else:
+    print(0)
