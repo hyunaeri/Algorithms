@@ -16,7 +16,7 @@ def bfs(z, x, y):
 
         # 탈출!
         if z == end_z and x == end_x and y == end_y:
-            return visited[z][x][y]
+            return 'Escaped in %d minute(s).' % visited[z][x][y]
 
         for i in range(6):
             nz, nx, ny = z + dz[i], x + dx[i], y + dy[i]
@@ -28,7 +28,7 @@ def bfs(z, x, y):
                     q.append([nz,nx,ny])
                     visited[nz][nx][ny] = visited[z][x][y] + 1
 
-    return False
+    return 'Trapped!'
 
 while True:
     # 빌딩의 층 수, 한층의 행과 열의 개수
@@ -63,9 +63,4 @@ while True:
                     end_z, end_x, end_y = i,j,w
                     building[i][j][w] = '.'
 
-    result = bfs(start_z, start_x, start_y)
-
-    if not result:
-        print('Trapped!')
-    else:
-        print('Escaped in %d minute(s).' % result)
+    print(bfs(start_z, start_x, start_y))
