@@ -65,7 +65,7 @@ while True:
 
     result = bfs(start_z, start_x, start_y)
 
-    if result == False:
+    if not result:
         print('Trapped!')
     else:
         print('Escaped in %d minute(s).' % result)
