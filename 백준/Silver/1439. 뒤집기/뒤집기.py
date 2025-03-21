@@ -1,11 +1,16 @@
 import sys
-s = list(map(int, sys.stdin.readline().strip()))
+read = sys.stdin.readline
 
-cnt = 0
-# 반복문을 통해 문자열을 확인
-for i in range(len(s) - 1):
-    # 현재 문자와 다음 문자가 다르면 카운트
-    if s[i] != s[i + 1]:
-        cnt += 1
+s = read().rstrip()
 
-print((cnt + 1) // 2)
+pairWithZero = 1 if s[0] == '0' else 0
+pairWithOne = 1 if s[0] == '1' else 0
+
+for i in range(1, len(s)):
+    if s[i] != s[i-1]:
+        if s[i] == '0':
+            pairWithZero += 1
+        else:
+            pairWithOne += 1
+
+print(min(pairWithZero, pairWithOne))
