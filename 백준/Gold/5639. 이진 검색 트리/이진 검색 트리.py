@@ -2,41 +2,51 @@ import sys
 sys.setrecursionlimit(10**5)
 read = sys.stdin.readline
 
-class BinaryTree:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
+class Node:
+  def __init__(self, value):
+    self.value = value
+    self.left = None
+    self.right = None
+
+class Tree:
+    def __init__(self):
+        self.root = None
     
     def insert(self, data):
-        current_node = self
-        while True:
+        if self.root is None:
+          self.root = Node(data)
+          
+        else:
+          current_node = self.root
+          while True:
             if data < current_node.value:
-                if current_node.left is None:
-                    current_node.left = BinaryTree(data)
-                    break
-                else:
-                    current_node = current_node.left
+              if current_node.left is None:
+                current_node.left = Node(data)
+                break
+              else:
+                current_node = current_node.left
             else:
-                if current_node.right is None:
-                    current_node.right = BinaryTree(data)
-                    break
-                else:
-                    current_node = current_node.right
+              if current_node.right is None:
+                current_node.right = Node(data)
+                break
+              else:
+                current_node = current_node.right
 
-    def printPostOrder(self):
-        if self.left is not None:
-            self.left.printPostOrder()
-        if self.right is not None:
-            self.right.printPostOrder()
-        print(self.value)
+    def printPostOrder(self, node = None):
+      if node is None:
+        node = self.root
+      if node.left is not None:
+          self.printPostOrder(node.left)
+      if node.right is not None:
+          self.printPostOrder(node.right)
+      print(node.value)
 
-tree = BinaryTree(int(read()))
+tree = Tree()
 
 while True:
     try:
         tree.insert(int(read()))
     except:
         break
-      
+
 tree.printPostOrder()
