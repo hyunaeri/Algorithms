@@ -3,14 +3,17 @@
 # 실버 2
 
 import sys
-sys.setrecursionlimit(10**6)
 read = sys.stdin.readline
 
 def dfs(tree, parent, start):
-  for next in tree[start]:
-    if parent[next] == -1:
-      parent[next] = start
-      dfs(tree, parent, next)
+  stack = [start]
+  
+  while stack:
+    node = stack.pop()
+    for next in tree[node]:
+      if parent[next] == -1:
+        parent[next] = node
+        stack.append(next)
       
 N = int(read())
 tree = [ [] for _ in range(N+1) ]
