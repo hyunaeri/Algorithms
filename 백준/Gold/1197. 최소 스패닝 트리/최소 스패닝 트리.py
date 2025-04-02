@@ -7,18 +7,15 @@ import sys
 read = sys.stdin.readline
 
 def prim(start, graph, visited, priorityQueue):
-  answer = 0
-  visited[start] = True
   heapq.heapify(priorityQueue)
-  
-  for nextCost, nextNode in graph[start]:
-    if not visited[nextNode]:
-      heapq.heappush(priorityQueue, (nextCost, nextNode))
+  heapq.heappush(priorityQueue, (0, start))
+  answer = 0
       
   while priorityQueue:
     cost, currentNode = heapq.heappop(priorityQueue)
     
-    if visited[currentNode]: continue
+    if visited[currentNode]: 
+      continue
     
     else:
       visited[currentNode] = True
