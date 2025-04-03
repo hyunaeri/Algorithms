@@ -1,91 +1,74 @@
-# 백준 16236 아기상어
-# 2020 삼성 SW 역량 테스트 기출 문제
-import sys
+# 2025.04.03 (목)
+# 백준 16236 아기 상어
+# 골드 3
+
 from collections import deque
+import sys
 read = sys.stdin.readline
 
-# 아기 상어가 돌아다니는 공간은 N * N 크기의 정사각형
+# 공간의 크기 N*N / 공간의 상태
 N = int(read())
-
-# 공간의 상태
-# 0: 빈 칸
-# 1, 2, 3, 4, 5, 6: 칸에 있는 물고기의 크기
-# 9: 아기 상어의 위치
-space = [ list(map(int,read().rstrip().split())) for _ in range(N) ]
-shark_x, shark_y = 0, 0
-
-# 아기 상어의 위치를 미리 담아줌
-for i in range(len(space)):
-    for j in range(len(space[i])):
-        if space[i][j] == 9:
-            space[i][j] = 0
-            shark_x, shark_y = i,j
-            break
-            
-
-# 아기상어의 최초 크기
-shark_size = 2
-# 아기상어가 먹은 물고기 수
-shark_eat = 0
-
-# 먹을 수 있는 물고기들의 거리를 담은 리스트를 반환해주는 함수
-def find_eat_fish(x,y):
-    global shark_size
-
-    # 방문 여부, 거리, 먹을 수 있는 물고기를 담을 리스트
-    visited = [ [False]*N for _ in range(N) ]
-    distance = [ [0]*N for _ in range(N) ]
-    can_eat_fish = []
-
-    queue = deque()
-    queue.append((x,y))
-
-    while queue:
-        x,y = queue.popleft()
-
-        # 아기상어는 상하좌우 이동이 가능하다
-        for dx, dy in [ (-1,0),(1,0),(0,-1),(0,1) ]:
-            nx, ny = x + dx, y + dy
-
-            # 공간을 벗어난 곳을 탐색 시
-            if nx < 0 or ny < 0 or nx >= N or ny >= N:
-                continue
-
-            # 아기상어보다 작거나 같은 물고기를 만났거나, 빈칸이면 이동이 가능하다
-            if space[nx][ny] <= shark_size and not visited[nx][ny]:
-                visited[nx][ny] = True
-                distance[nx][ny] = distance[x][y] + 1
-                queue.append((nx,ny))
-
-                # 물고기를 만났는데 아기상어보다 작다면 먹을 수 있는 물고기이므로 리스트에 담아준다
-                if space[nx][ny] != 0 and space[nx][ny] < shark_size:
-                    can_eat_fish.append([distance[nx][ny], nx, ny])
-
-    # 탐색이 끝이 나면 조건 순으로 정렬을 해준다
-    # 거리가 짧은 순, x좌표가 작은 순, y좌표가 작은 순서로 정렬한다
-    can_eat_fish.sort(key = lambda x: (x[0], x[1], x[2]))
-
-    return can_eat_fish
-
+space = [ list(map(int, read().split())) for _ in range(N) ]
 answer = 0
 
+def bfs(x, y, baby_size):
+  can_eat_fish_list = []
+  visited = [ [False] * N for _ in range(N) ]
+  q = deque([(0, x, y)])
+  visited[x][y] = True
+  
+  while q:
+    dist, x, y = q.popleft()
+    
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+      nx, ny = x + dx, y + dy
+      
+      # 공간의 범위를 벗어나지 않고, 미 방문한 곳이라면
+      if 0 <= nx < N and 0 <= ny < N and not visited[nx][ny]:
+        # 빈칸이거나 아기 상어와 크기가 같거나 작은 물고기 방향으로만 이동 가능
+        if space[nx][ny] <= baby_size:
+          q.append((dist + 1, nx, ny))
+          visited[nx][ny] = True
+          
+          # 빈칸이 아니고, 아기 상어보다 작은 물고기만 먹을 수 있음
+          if 0 < space[nx][ny] < baby_size:
+            can_eat_fish_list.append((dist + 1, nx, ny))
+  
+  return can_eat_fish_list
+
+# 초기 아기 상어의 위치, 크기
+baby_x, baby_y, baby_size = 0, 0, 2
+
+for i in range(N):
+  for j in range(N):
+    if space[i][j] == 9:
+      baby_x, baby_y = i, j
+      space[i][j] = 0
+      break
+
+# 먹방 시작
+eating_count = 0
+
 while True:
-    # 거리, x, y좌표 순으로 원소가 들어 있음
-    can_eat_fish = find_eat_fish(shark_x, shark_y)
-
-    if len(can_eat_fish) == 0:
-        print(answer)
-        exit(0)
-
-    # 먹을 수 있는 물고기 리스트는 정렬 되어 있기 때문에 맨 앞의 물고기부터 잡아 먹는다
-    move_time, shark_x, shark_y = can_eat_fish[0]
-
-    shark_eat += 1
-    # 먹다 보니 자신의 크기 만큼 먹었다면 본인의 몸집 크기 증가
-    if shark_eat == shark_size:
-        shark_size += 1
-        shark_eat = 0
-
-    # 물고기를 먹고 지나간 자리는 빈칸 으로 바꾼다
-    space[shark_x][shark_y] = 0
-    answer += move_time
+  can_eat_fish_list = bfs(baby_x, baby_y, baby_size)
+  
+  # 먹을 수 있는 물고기가 없다면 종료
+  if not can_eat_fish_list:
+    break
+  
+  # 먹을 수 있는 물고기 중 가장 가까운 물고기 찾기 (거리, x좌표, y좌표)
+  can_eat_fish_list.sort(key = lambda x: (x[0], x[1], x[2]))
+  dist, fish_x, fish_y = can_eat_fish_list[0]
+  
+  # 아기 상어의 위치 업데이트
+  baby_x, baby_y = fish_x, fish_y
+  space[fish_x][fish_y] = 0
+  eating_count += 1
+  answer += dist
+  
+  # 아기 상어의 크기 증가
+  if baby_size == eating_count:
+    baby_size += 1
+    eating_count = 0
+    
+print(answer)
