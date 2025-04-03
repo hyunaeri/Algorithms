@@ -1,5 +1,4 @@
 import sys
-import copy
 read = sys.stdin.readline
 
 # ↑, ↖, ←, ↙, ↓, ↘, →, ↗
@@ -55,12 +54,13 @@ def dfs(x, y, score, space):
                 space[fx][fy], space[nx][ny] = space[nx][ny], space[fx][fy]
                 break
 
-    # 상어 이동
+    # 상어 이동 (최대 3칸)
     for step in range(1, 4):
         nx = x + dx[shark_dir] * step
         ny = y + dy[shark_dir] * step
         if 0 <= nx < 4 and 0 <= ny < 4 and space[nx][ny][0] > 0:
-            dfs(nx, ny, score, copy.deepcopy(space))
+            remember_space = [ [ cell[:] for cell in row ] for row in space ]
+            dfs(nx, ny, score, remember_space)
 
 dfs(0, 0, 0, space)
 print(answer)
