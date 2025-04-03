@@ -18,13 +18,13 @@ for i in range(4):
 def dfs(x, y, score, space):
     global answer
     
-    # 상어가 있는 칸의 물고기 방향
-    shark_dir = space[x][y][1]
-
     # 상어가 물고기를 먹음
     score += space[x][y][0]
     answer = max(answer, score)
     space[x][y][0] = 0
+    
+    # 상어가 있는 칸의 물고기 방향
+    shark_dir = space[x][y][1]
 
     # 물고기 이동
     for i in range(1, 17):
@@ -49,6 +49,7 @@ def dfs(x, y, score, space):
             nd = (fd + j) % 8 
             nx = fx + dx[nd]
             ny = fy + dy[nd]
+            # 공간 안에 있고, 상어가 없는 칸으로 이동할 수 있는 경우
             if 0 <= nx < 4 and 0 <= ny < 4 and not (nx == x and ny == y):
                 space[fx][fy][1] = nd
                 space[fx][fy], space[nx][ny] = space[nx][ny], space[fx][fy]
