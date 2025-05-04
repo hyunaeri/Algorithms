@@ -1,39 +1,42 @@
+# 2025.05.04 (일)
 # 백준 1717 집합의 표현
+# 골드 5
+
 import sys
-sys.setrecursionlimit(10**6)
 read = sys.stdin.readline
 
-# n+1 개의 집합, m 개의 연산
-n, m = map(int,read().split())
-parent = [ i for i in range(n+1) ]
+# 집합의 개수 + 1, 연산의 개수
+n, m = map(int, read().split())
+parent = [i for i in range(n + 1)]
 
 def find(x):
-    if parent[x] == x:
-        return x
-    parent[x] = find(parent[x])
-    return parent[x]
+  while parent[x] != x:
+    parent[x] = parent[parent[x]]
+    x = parent[x]
+  return x
 
-def union(x,y):
-    px = find(x)
-    py = find(y)
+def union(x, y):
+  parent_x = find(x)
+  parent_y = find(y)
+  
+  if parent_x == parent_y:
+    return
+  
+  if parent_x > parent_y:
+    parent[parent_x] = parent_y
+  else:
+    parent[parent_y] = parent_x
 
-    if px == py:
-        return
-    
-    if px > py:
-        parent[px] = py
-    else:
-        parent[py] = px
-
-# m 번의 연산
 for _ in range(m):
-    operator, a, b = map(int, read().split())
-
-    if operator == 0:
-        union(a,b)
-
-    elif operator == 1:
-        if find(a) == find(b):
-            print('YES')
-        else:
-            print('NO')
+  command, a, b = map(int, read().split())
+  
+  # 합집합
+  if command == 0:
+    union(a, b)
+    
+  # 같은 집합인지 확인
+  else:
+    if find(a) == find(b):
+      print('YES')
+    else:
+      print('NO')  
