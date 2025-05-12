@@ -1,26 +1,33 @@
+# 2025.05.12 (월)
 # 백준 2606 바이러스
+# 실버 3
+
 import sys
 read = sys.stdin.readline
 
-def DFS(start):
-    global count
-    visited[start] = 1
+# 컴퓨터의 수, 연결된 컴퓨터 쌍의 수
+N = int(read())
+M = int(read())
 
-    for i in graph[start]:
-        if not visited[i]:
-            count += 1
-            DFS(i)
+network = [ [] for _ in range(N + 1) ]
+visited = [ False for _ in range(N + 1) ]
+answer = 0
 
-n = int(read())
-m = int(read())
-graph = [ [] for _ in range(n+1) ]
-visited = [ 0 for _ in range(n+1) ]
-count = 0
+for _ in range(M):
+  a, b = map(int, read().split())
+  network[a].append(b)
+  network[b].append(a)
+  
 
-for _ in range(m):
-    x, y = map(int, read().split())
-    graph[x].append(y)
-    graph[y].append(x)
+def dfs(start):
+  global answer
+  
+  visited[start] = True
+  
+  for next_node in network[start]:
+    if not visited[next_node]:
+      dfs(next_node)
+      answer += 1
 
-DFS(1)
-print(count)
+dfs(1)
+print(answer)
