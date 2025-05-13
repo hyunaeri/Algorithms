@@ -48,14 +48,11 @@ for i in range(N):
     if box[i][j] == 1:
       t.append((i, j, 0))
       
+
+answer = bfs(t)
+
 if all_ripe(box):
-  print(0)
+  print(answer)
   
 else:
-  answer = bfs(t)
-  
-  if all_ripe(box):
-    print(answer)
-    
-  else:
-    print(-1)
+  print(-1)
