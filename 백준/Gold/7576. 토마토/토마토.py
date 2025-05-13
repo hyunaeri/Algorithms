@@ -1,45 +1,61 @@
+# 2025.05.13(화)
 # 백준 7576 토마토
-# BFS
+# 골드 5
+
 from collections import deque
 import sys
 read = sys.stdin.readline
 
-def BFS():
-    while queue:
-        x, y = queue.popleft()
-        # 상하좌우로는 영향을 주기에..
-        for dx,dy in [(-1,0),(1,0),(0,-1),(0,1)]:
-            nx = x + dx
-            ny = y + dy
+# 상자의 가로 / 세로
+M, N = map(int, read().split())
+box = [ list(map(int, read().split())) for _ in range(N) ]
+visited = [ [False] * M for _ in range(N) ]
 
-            # 토마토 칸 범위를 벗어나지않고, 익지 않은 토마토가 존재할 경우
-            if 0 <= nx < n and 0 <= ny < m and tomatoes[nx][ny] == 0: 
-                tomatoes[nx][ny] = tomatoes[x][y] + 1
-                queue.append((nx,ny))
+def is_inside(x, y):
+  return True if 0 <= x < N and 0 <= y < M else False
 
-# 가로 칸의 수, 세로 칸의 수
-m, n = map(int,read().rstrip().split())
+def all_ripe(box):
+  for b in box:
+    if 0 in b:
+      return False
+  return True
 
-# 1: 익은 토마토
-# 0: 안 익은 토마토 
-# -1: 토마토가 들어있지 않음
-tomatoes = [ list(map(int, read().rstrip().split())) for _ in range(n) ]
-queue = deque()
+def bfs(tomatoes):
+  q = deque(tomatoes)
+  
+  for x, y, _ in tomatoes:
+    visited[x][y] = True
+    
+  days = 0
+  
+  while q:
+    x, y, days = q.popleft()
+    
+    for dx, dy in [ (-1, 0), (1, 0), (0, -1), (0, 1) ]:
+      nx, ny = x + dx, y + dy
+      
+      if is_inside(nx, ny) and box[nx][ny] == 0 and not visited[nx][ny]:
+        box[nx][ny] = 1
+        q.append((nx, ny, days + 1))
+        visited[nx][ny] = True
+  
+  return days
 
-# 익은 토마토의 위치를 큐에 저장
-for i in range(n):
-    for j in range(m):
-        if tomatoes[i][j] == 1:
-            queue.append((i,j))
-
-BFS()
-result = 0
-for tomato_line in tomatoes:
-    for tomato in tomato_line:
-        if tomato == 0:
-            print("-1")
-            exit()
-    result = max(result, max(tomato_line))  
-
-print(result - 1)
-
+# 처음부터 익은 토마토에 대한 정보
+t = []
+for i in range(N):
+  for j in range(M):
+    if box[i][j] == 1:
+      t.append((i, j, 0))
+      
+if all_ripe(box):
+  print(0)
+  
+else:
+  answer = bfs(t)
+  
+  if all_ripe(box):
+    print(answer)
+    
+  else:
+    print(-1)
