@@ -1,52 +1,42 @@
+# 2025.05.13 (화)
 # 백준 1325 효율적인 해킹
-# https://www.acmicpc.net/problem/1325
+# 실버 1
 
 from collections import deque
 import sys
 read = sys.stdin.readline
 
-# 컴퓨터의 수, 관계 수
-N,M = map(int,read().split())
+N, M = map(int, read().split())
 
-computer = [ [] for _ in range(N+1) ]
+trust = [[] for _ in range(N + 1)]
 
-# a 가 b 를 신뢰한다.
+# b가 a를 신뢰 → b를 해킹하면 a도 해킹 가능
 for _ in range(M):
-    trust_a, trust_b = map(int, read().split())
-    computer[trust_b].append(trust_a)
-    
+    a, b = map(int, read().split())
+    trust[b].append(a)
 
-# print(computer)
+def bfs(start):
+    visited = [False] * (N + 1)
+    visited[start] = True
+    q = deque([start])
+    cnt = 1
 
-def bfs(x):
-    visited = [False] * (N+1)
-    q = deque()
-    q.append(x)
-    visited[x] = True
-    count = 1
-    
     while q:
-        comp = q.popleft()
-        
-        for com in computer[comp]:
-            if not visited[com]:
-                q.append(com)
-                count += 1
-                visited[com] = True
-    
-    return count
+        cur = q.popleft()
+        for nxt in trust[cur]:
+            if not visited[nxt]:
+                visited[nxt] = True
+                cnt += 1
+                q.append(nxt)
+    return cnt
 
-max_cnt = 1
-answer = []
-for i in range(1, N+1):
-    temp_cnt = bfs(i)
+result = [0] * (N + 1)
+
+for i in range(1, N + 1):
+    result[i] = bfs(i)
     
-    if temp_cnt > max_cnt:
-        max_cnt = temp_cnt
-        answer.clear()
-        answer.append(i)
-        
-    elif temp_cnt == max_cnt:
-        answer.append(i)
-    
-print(*answer)
+max_cnt = max(result)
+
+for i in range(1, N + 1):
+    if result[i] == max_cnt:
+        print(i, end=' ')
