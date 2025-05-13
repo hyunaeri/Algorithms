@@ -1,34 +1,36 @@
-import sys
+# 2025.05.13 (화)
+# 백준 2178 미로 탐색
+# 실버 1
 from collections import deque
+import sys
+read = sys.stdin.readline
 
-input = sys.stdin.readline
+# 세로 / 가로
+N,M = map(int, read().split())
 
-n, m = map(int, input().split())
-graph = []
+# 미로 입력
+maze = [ list(map(int, read().rstrip())) for _ in range(N) ]
+visited = [ [False] * M for _ in range(N) ]
 
-for _ in range(n):
-    graph.append(list(map(int, input().rstrip()))) # readline의 경우 맨 뒤에 '\n'까지 입력받으므로 제거해줘야 함
-
-# 상하좌우
-dx = [-1, 1, 0, 0] 
-dy = [0, 0, -1, 1]
+def is_inside(x, y):
+  return True if 0 <= x < N and 0 <= y < M else False
 
 def bfs(x, y):
+  q = deque([(x, y, 1)])
+  visited[x][y] = True
+  
+  while q:
+    x, y, count = q.popleft()
     
-    queue = deque()
-    queue.append((x,y))
-
-    while queue:
-        x, y = queue.popleft()
-
-        for i in range(4):
-            nx = x + dx[i]
-            ny = y + dy[i]
-
-            if 0 <= nx < n and 0 <= ny < m and graph[nx][ny] == 1:
-                queue.append((nx, ny))
-                graph[nx][ny] = graph[x][y] + 1
+    if (x, y) == (N-1, M-1):
+      return count
     
-    return graph[n-1][m-1]
+    for dx, dy in [ (-1, 0), (1, 0), (0, -1), (0, 1) ]:
+      nx, ny = x + dx, y + dy
+      
+      if is_inside(nx, ny):
+        if maze[nx][ny] == 1 and not visited[nx][ny]:
+          q.append((nx, ny, count + 1))
+          visited[nx][ny] = True
 
 print(bfs(0,0))
