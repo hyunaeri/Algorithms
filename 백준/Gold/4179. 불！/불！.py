@@ -1,73 +1,73 @@
+# 2025.05.14 (수)
 # 백준 4179 불!
+# 골드 3
 
 from collections import deque
 import sys
-
 read = sys.stdin.readline
-runner = deque()
-fire = deque()
-dx = [-1,1,0,0]
-dy = [0,0,-1,1]
+
+# 세로, 가로
+R, C = map(int, read().split())
+
+# 벽 : #
+# 지나갈 수 있는 공간 : .
+# 지훈이의 초기 위치 : J
+# 불이 난 공간 : F
+maze = [ list(read().rstrip()) for _ in range(R) ]
+visited = [ [False] * C for _ in range(R) ]
+
+jihun, fire = deque(), deque()
+
+# 초기 지훈이의 위치, 불이 난 공간 체크
+for i in range(R):
+  for j in range(C):
+    if maze[i][j] == 'J':
+      jihun.append((i, j, 0))
+      maze[i][j] = '.'
+    
+    elif maze[i][j] == 'F':
+      fire.append((i, j))
+      
+def is_inside(x, y):
+  return True if 0 <= x < R and 0 <= y < C else False
 
 def burn():
-    len_fire = len(fire)
-    for _ in range(len_fire):
-        x, y = fire.popleft()
-        for i in range(4):
-            nx, ny = x + dx[i], y + dy[i]
+  for _ in range(len(fire)):
+    x, y = fire.popleft()
+    
+    for dx, dy in [ (-1, 0), (1, 0), (0, -1), (0, 1) ]:
+      nx, ny = x + dx, y + dy
+      
+      # 미로 범위 안이면서 지나갈 수 있는 공간에만 불이 옮겨 붙을 수 있음
+      if is_inside(nx, ny) and maze[nx][ny] == '.':
+        maze[nx][ny] = 'F'
+        fire.append((nx, ny))
 
-            # 미로의 범위 내에서만
-            if 0 <= nx < M and 0 <= ny < N:
-                if maze[nx][ny] == '.':
-                    maze[nx][ny] = 'F'
-                    fire.append([nx,ny])
+def bfs():
+  time = 0
+  
+  while jihun:
+    # 불 번짐 → 지훈 이동 완료 
+    burn()
+    
+    for _ in range(len(jihun)):
+      x, y, time = jihun.popleft()
 
-def escape():
-    while runner:
-        len_runner = len(runner)
+      # 미로 가장 자리인 경우 = 탈출
+      if x == 0 or x == R-1 or y == 0 or y == C-1:
+        print(time + 1)
+        return
+      
+      for dx, dy in [ (-1, 0), (1, 0), (0, -1), (0, 1) ]:
+        nx, ny = x + dx, y + dy
+        
+        # 미로 범위 안이면서 지나갈 수 있는 공간에만 지훈이가 이동할 수 있음
+        if is_inside(nx, ny) and maze[nx][ny] == '.' and not visited[nx][ny]:
+          jihun.append((nx, ny, time + 1))
+          visited[nx][ny] = True
+    
+    
+  print('IMPOSSIBLE')
+  return 
 
-        # 현재 큐에 들어있는 길이 만큼만 움직임
-        for _ in range(len_runner):
-            x, y = runner.popleft()
-            for i in range(4):
-                nx, ny = x + dx[i], y + dy[i]
-
-                # 미로의 범위 내에서만
-                if 0 <= nx < M and 0 <= ny < N:
-                    # 빈칸이면서 방문하지 않은 곳 일때만
-                    if maze[nx][ny] == '.' and visited[nx][ny] == 0:
-                        visited[nx][ny] = visited[x][y] + 1
-                        runner.append([nx,ny])
-
-                # 미로의 가장자리 도달 = 탈출! 
-                elif nx < 0 or ny <0 or nx == M or ny == N:
-                    print(visited[x][y] + 1)
-                    return
-                
-        burn()
-    print('IMPOSSIBLE')
-    return
-
-# 미로 행의 개수, 열의 개수 = 세로, 가로
-M,N = map(int,read().split())
-
-# '#': 벽
-# '.': 지나갈 수 있는 공간
-# 'J': 지훈이의 미로에서의 초기위치 (지나갈 수 있는 공간)
-# 'F': 불이 난 공간
-maze = [ list(map(str,read().rstrip())) for _ in range(M) ]
-visited = [ [0]*N for _ in range(M) ]
-
-for i in range(M):
-    for j in range(N):
-        # 지훈이의 초기 위치
-        if maze[i][j] == 'J':
-            # 초기 위치를 따로 저장해 두었으니, 기존의 초기 위치는 빈칸으로 봐도 무방함
-            maze[i][j] = '.'
-            runner.append([i,j])
-        # 불의 초기 지점
-        elif maze[i][j] == 'F':
-            fire.append([i,j])
-
-burn()
-escape()
+bfs()
