@@ -1,49 +1,46 @@
+# 2025.05.15 (목)
 # 백준 2206 벽 부수고 이동하기
-# BFS
-import sys
+# 골드 3
+
 from collections import deque
+import sys
 read = sys.stdin.readline
 
-# 세로, 가로
-N,M = map(int, read().split())
-matrix = [ list(map(int,read().rstrip())) for _ in range(N) ]
+# N * M 크기의 행렬
+N, M = map(int, read().split())
 
-# 3차원 배열로 선언 후 벽 파괴 여부를 확인함.
-# visited[x][y][0] : 벽 파괴 1회 이후이므로 불가능, [x][y][1] : 벽 파괴 가능
-visited = [ [[0]*2 for _ in range(M)] for _ in range(N) ]
+# 0 : 이동할 수 있는 곳
+# 1 : 벽
+board = [ list(read().rstrip()) for _ in range(N) ]
+visited = [ [ [False] * M for _ in range(N) ] for _ in range(2) ]
 
-# 좌표 값, 벽을 부술 수 있는 횟수
-def bfs(x,y,wall_break_left):
-    queue = deque()
-    queue.append((x,y,wall_break_left))
-    # 방문 여부
-    visited[x][y][wall_break_left] = 1
+def is_inside(x, y):
+  return True if 0 <= x < N and 0 <= y < M else False
 
-    while queue:
-        x,y,wall_break_left = queue.popleft()
-
-        # 도착!
-        if x == N-1 and y == M-1 :
-            return visited[x][y][wall_break_left]
-
-        # 상하좌우
-        for dx, dy in [ (-1,0), (1,0), (0,-1), (0,1) ]:
-            nx , ny = x + dx, y + dy
-
-            # 그래프의 범위를 벗어나면
-            if nx < 0 or ny < 0 or nx > N-1 or ny > M-1:
-                continue
-
-            # 벽이 없고, 미 방문 지역이라면
-            if matrix[nx][ny] == 0 and visited[nx][ny][wall_break_left] == 0:
-                queue.append((nx,ny,wall_break_left))
-                visited[nx][ny][wall_break_left] = visited[x][y][wall_break_left] + 1
-
-            # 벽을 만났는데, 아직 벽을 한번도 파괴하지 않았다면 벽을 부수고 지나감
-            if matrix[nx][ny] == 1 and wall_break_left == 1:
-                queue.append((nx,ny,wall_break_left - 1))
-                visited[nx][ny][wall_break_left - 1] = visited[x][y][wall_break_left] + 1
+def bfs(x, y):
+  q = deque([(x, y, 0, 1)])
+  visited[0][x][y] = True
+  
+  while q:
+    x, y, check, count = q.popleft()
     
-    return -1
+    if (x, y) == (N-1, M-1):
+      return count
+    
+    for dx, dy in [ (-1, 0), (1, 0), (0, -1), (0, 1) ]:
+      nx, ny = x + dx, y + dy
+      
+      if is_inside(nx, ny):
+        # 벽을 아직 안 부쉈고, 다음이 벽이면 부수고 진행
+        if board[nx][ny] == '1' and check == 0 and not visited[1][nx][ny]:
+          visited[1][nx][ny] = True
+          q.append((nx, ny, 1, count + 1))
+        
+        # 다음이 이동할 수 있는 공간인 경우
+        elif board[nx][ny] == '0' and not visited[check][nx][ny]:
+          visited[check][nx][ny] = True
+          q.append((nx, ny, check, count + 1))
+          
+  return -1
 
-print(bfs(0,0,1))
+print(bfs(0, 0))
