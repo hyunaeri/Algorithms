@@ -16,12 +16,7 @@ for _ in range(N):
   command = int(read())
   
   if command != 0:
-    abs_command = abs(command)
-    heapq.heappush(heap, (abs_command, command))
+    heapq.heappush(heap, (abs(command), command))
     
   else:
-    if len(heap) == 0:
-      print(0)
-    else:
-      result = heapq.heappop(heap)
-      print(result[-1])
+    print(heapq.heappop(heap)[-1] if heap else 0)
