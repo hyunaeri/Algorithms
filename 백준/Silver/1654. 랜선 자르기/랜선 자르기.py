@@ -1,34 +1,40 @@
-# 백준 1654 나무자르기
+# 2025.05.20 (화)
+# 백준 1654 랜선 자르기
+# 실버 2
+
+# 이분탐색을 이용하는 Parametric Search
+# 주어진 범위 내에서 원하는 값 또는 조건에 가장 일치하는 값을 찾아내는 알고리즘
+
 import sys
 read = sys.stdin.readline
 
-# 이미 가지고 있는 랜선의 개수, 필요한 랜선의 개수
-M,N = map(int,read().split())
-lans = sorted([int(read()) for _ in range(M)])
-max_lan = lans[-1]
+# 이미 가지고 있는 랜선 수, 필요한 랜선의 수
+K, N = map(int, read().split())
+lan = list()
 
-def binary_search(target, start, end):
-    while start <= end:
-        mid = (start+end) // 2
-        answer = 0
+for _ in range(K):
+  line = int(read())
+  lan.append(line)
 
-        for lan in lans:
-            answer += (lan // mid)
+def parametric_search(lan, N):
+  low, high = 1, max(lan)
+  mid = 0
+  
+  while low <= high:
+    mid = (low + high) // 2
+    cnt = 0
+    
+    for l in lan:
+      cnt += (l // mid)
+    
+    # 랜선 N개 이상을 만들 수 있다면, mid 보다 더 크게 잘라도 되는지?
+    if cnt >= N:
+      low = mid + 1
+    
+    # N개 미만으로 만들 수 있으면
+    else:
+      high = mid - 1
 
-        # 필요한 개수보다 더 많이 만든 경우
-        if answer >= target:
-            start = mid + 1
+  return high
 
-        # # 필요한 만큼만 만든 경우
-        # elif answer == target:
-        #     return mid
-        
-        # 필요한 개수보다 덜 만든 경우
-        else:
-            end = mid - 1
-
-    # 딱 필요한 만큼은 못만듬,
-    # 그래서 필요한 개수에 가장 가까운 값
-    return end
-
-print(binary_search(N, 1, max_lan))
+print(parametric_search(lan, N))
