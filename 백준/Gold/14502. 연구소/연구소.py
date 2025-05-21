@@ -1,79 +1,65 @@
-# 2025.05.21 (수)
 # 백준 14502 연구소
-# 골드 4
-
+# BFS
 from collections import deque
-from itertools import combinations
 import sys
+from copy import deepcopy
 read = sys.stdin.readline
 
-# [세로 / 가로]
-N, M = map(int, read().split())
+# 지도의 세로, 가로 크기
+n,m = map(int, read().rstrip().split())
 
-# [지도 정보]
-# 빈 칸 : 0
-# 벽 : 1
-# 바이러스 위치 : 2
-map = [ list(map(int,read().split())) for _ in range(N) ]
-
-# 벽을 세울 수 있는 공간 리스트, 초기 바이러스 위치
-possible = []
-virus = []
-for i in range(N):
-  for j in range(M):
-    if map[i][j] == 0:
-      possible.append((i, j))
-    elif map[i][j] == 2:
-      virus.append((i, j))
-
-# 최대 64C3 = 41664
-combinations_wall = list(combinations(possible, 3))
-
-def is_inside(x, y):
-  return True if 0 <= x < N and 0 <= y < M else False
-
-# 안전 영역 계산
-def calc_safety_space(maps):
-  result = 0  
-  for m in maps:
-    for space in m:
-      if space == 0:
-        result += 1
-  return result
-
+# 빈 칸:0 
+# 벽:1 
+# 바이러스:2
+lab = [ list(map(int,read().rstrip().split())) for _ in range(n) ]
 answer = 0
 
 def bfs():
-  global answer
-  
-  for combination in combinations_wall:
-    q = deque(virus)
-    copy_map = [ row[:] for row in map ]
-    visited = [ [False] * M for _ in range(N) ]
+    queue = deque()
+    test_lab = deepcopy(lab)
+
+    for i in range(n):
+        for j in range(m):
+            # 바이러스가 있는 곳(2)은 미리 큐에 저장
+            if test_lab[i][j] == 2:
+                queue.append((i,j))
+
+    while queue:
+        x,y = queue.popleft()
+        # 상하좌우
+        for dx,dy in [(-1,0),(1,0),(0,-1),(0,1)]:
+            nx,ny = x+dx, y+dy
+
+            # 연구소의 범위를 벗어났거나 벽을 만난 경우
+            if nx < 0 or ny < 0 or nx >= n or ny >= m or test_lab[nx][ny] == 1 :
+                continue
+
+            # 그렇지 않은 경우 : 빈 칸
+            if test_lab[nx][ny] == 0:
+                queue.append((nx,ny))
+                test_lab[nx][ny] = 2
+
+    global answer
+    count = 0
+    for i in range(n):
+        for j in range(m):
+            # 벽이랑 바이러스 칸이 아닌 경우
+            if test_lab[i][j] == 0:
+                count += 1
+
+    answer = max(answer, count)
+
+def makeWall(count):
+    if count == 3:
+        bfs()
+        return
     
-    for x, y in combination:
-      copy_map[x][y] = 1
+    for i in range(n):
+        for j in range(m):
+            if lab[i][j] == 0:
+                lab[i][j] = 1
+                makeWall(count + 1)
+                lab[i][j] = 0
 
-    # 초기 바이러스 방문 처리
-    for x, y in virus:
-      visited[x][y] = True
-
-    while q:
-      x, y = q.popleft()
-      
-      for dx, dy in [ (-1, 0), (1, 0), (0, -1), (0, 1) ]:
-        nx, ny = x + dx, y + dy
-        
-        # 지도의 범위를 벗어나지 않고
-        if is_inside(nx, ny):
-          # 미 방문 공간이면서 빈 칸인 경우
-          if not visited[nx][ny] and copy_map[nx][ny] == 0:
-            copy_map[nx][ny] = 2
-            visited[nx][ny] = True
-            q.append((nx, ny))
-
-    answer = max(answer, calc_safety_space(copy_map))
-  
-  return answer
-
-print(bfs())
+makeWall(0)
+print(answer)
