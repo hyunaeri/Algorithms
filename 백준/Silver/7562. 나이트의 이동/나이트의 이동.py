@@ -1,46 +1,45 @@
-# 백준 7562 나이트의 이동
-# BFS
+# 2025.05.25 (일)
+# 백준 7562
+# 실버 1
+
 from collections import deque
 import sys
 read = sys.stdin.readline
 
-def BFS(a,b):
-    queue = deque()
-    queue.append((a,b))
-    chess[a][b] = 1
+def is_inside(x, y):
+  return True if 0 <= x < row and 0 <= y < row else False
 
-    while queue:
-        x, y = queue.popleft()
-        # 이동하고자 하는 칸에 도달
-        if x == result_x and y == result_y:
-            print(chess[x][y] - 1)
-            break
+def bfs(row, init_x, init_y, goal_x, goal_y):
+  q = deque([(init_x, init_y, 0)])
+  visited = [ [False] * row for _ in range(row) ]
+  visited[init_x][init_y] = True
+  
+  while q:
+    x, y, cnt = q.popleft()
+    
+    if (x, y) == (goal_x, goal_y):
+      return cnt
+    
+    # 대각선 8방향
+    for dx, dy in [ (-2, -1), (-1, -2), (-2, 1), (-1, 2), (1, -2), (2, -1), (1, 2), (2, 1) ]:
+      nx, ny = x + dx, y + dy
+      
+      if is_inside(nx, ny) and not visited[nx][ny]:
+        q.append((nx, ny, cnt + 1))
+        visited[nx][ny] = True
+        
+# 테스트 케이스 개수
+case = int(read())
 
-        # 나이트가 움직일 수 있는 8방향
-        for dx,dy in [ (-1,-2),(-2,-1),(-2,1),(-1,2),(1,2),(2,1),(2,-1),(1,-2) ]:
-            nx = x + dx
-            ny = y + dy
-
-            # 체스판 범위 내에서 이동했고, 미 방문 지점이라면
-            if 0 <= nx < board and 0 <= ny < board and chess[nx][ny] == 0:
-                queue.append((nx,ny))
-                chess[nx][ny] = chess[x][y] + 1
-
-
-# 테스트 케이스 수
-T = int(read())
-for _ in range(T):
-    # 체스판 한 변의 길이
-    board = int(read())
-    chess = [ [0]*board for _ in range(board) ]
-
-    # 나이트가 현재 있는 칸
-    knight_x, knight_y = map(int, read().rstrip().split())
-    # 나이트가 이동하려고 하는 칸
-    result_x, result_y = map(int, read().rstrip().split())
-
-    # BFS
-    BFS(knight_x, knight_y)
-
-
-
+for _ in range(case):
+  # 체스판의 한 변의 길이
+  row = int(read())
+  
+  # 나이트 현재 위치
+  knight_x, knight_y = map(int, read().split())
+  
+  # 나이트 목표 위치
+  goal_x, goal_y = map(int, read().split())
+  
+  result = bfs(row, knight_x, knight_y, goal_x, goal_y)
+  print(result)
