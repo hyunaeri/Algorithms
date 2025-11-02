@@ -1,45 +1,48 @@
-# 백준 1926 그림
-import sys
+# 백준 1926
+# 실버 1
+# https://www.acmicpc.net/problem/1926
+
 from collections import deque
+import sys
 read = sys.stdin.readline
-dx = [-1,1,0,0]
-dy = [0,0,-1,1]
 
-# 도화지의 세로, 가로
-n,m = map(int,read().split())
-paper = [ list(map(int,read().split())) for _ in range(n) ]
-visited = [ [False]*m for _ in range(n) ]
+# 도화지 세로, 가로
+n, m = map(int, read().rstrip().split())
 
-def bfs(x,y):
-    # 초기 넓이는 1
-    area = 1
+# 그림 정보
+pic = [ list(map(int, read().rstrip().split())) for _ in range(n) ]
+visited = [ [False] * m for _ in range(n) ]
 
-    q = deque()
-    q.append([x,y])
-    visited[x][y] = True
+def is_inside(x, y):
+  return 1 if 0 <= x < n and 0 <= y < m else 0
 
-    while q:
-        x,y = q.popleft()
+
+def bfs(sx, sy):
+  q = deque([(sx, sy)])
+  visited[sx][sy] = True
+  size = 0
+  
+  while q:
+    x, y = q.popleft()
+    size += 1
+    
+    for dx, dy in [(-1,0), (1,0), (0,-1), (0,1)]:
+      nx, ny = x + dx, y + dy
+      
+      if is_inside(nx, ny):
+        if pic[nx][ny] == 1 and not visited[nx][ny]:
+          q.append((nx, ny))
+          visited[nx][ny] = True
         
-        for i in range(4):
-            nx, ny = x + dx[i], y + dy[i]
+  return size
 
-            if 0 <= nx < n and 0 <= ny < m:
-                if paper[nx][ny] == 1 and not visited[nx][ny]:
-                    q.append([nx,ny])
-                    visited[nx][ny] = True
-                    area += 1
-
-    return area
-
-# 그림이 하나도 없는 경우에는 가장 넓은 그림의 넓이는 0이다.
-answer = [0]
+max_size = 0
+pic_cnt = 0
 
 for i in range(n):
-    for j in range(m):
-        # 그림을 찾으면 탐색 시작
-        if paper[i][j] == 1 and not visited[i][j]:
-            answer.append(bfs(i,j))
+  for j in range(m):
+    if pic[i][j] == 1 and not visited[i][j]:
+      max_size = max(max_size, bfs(i, j))
+      pic_cnt += 1
 
-print(len(answer) - 1)
-print(max(answer))
+print(pic_cnt, max_size, sep='\n')
