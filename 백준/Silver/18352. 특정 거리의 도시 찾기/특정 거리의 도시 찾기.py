@@ -1,49 +1,40 @@
-# 백준 18352 특정 거리의 도시 찾기
+# 백준 18352
+# 실버 2
+# https://www.acmicpc.net/problem/18352
+
+from collections import deque
 import sys
-import heapq
 read = sys.stdin.readline
-INF = int(2e9)
 
-# 도시의 개수, 도로의 개수, 거리 정보, 출발 도시의 번호
-v, e, k, start_city = map(int, read().split())
-graph = [ [] for _ in range(v+1) ]
-distance = [INF] * (v+1)
-queue = []
+# 도시의 개수, 도로의 개수, 거리정보, 출발 도시의 번호
+N, M, K, X = map(int, read().rstrip().split())
 
-for _ in range(e):
-    x, y = map(int,read().split())
-    # 모든 도로는 가중치가 1
-    graph[x].append([y,1])
+road = [ [] for _ in range(N+1) ]
+visited = [False] * (N+1)
 
-
-def dijkstra(start):
-    # 자기 자신으로 가는 비용은 0
-    distance[start] = 0
-    heapq.heappush(queue, [0, start])
-
-    while queue:
-        dist, current_node = heapq.heappop(queue)
-
-        if distance[current_node] < dist:
-            continue
-
-        for next_node, next_cost in graph[current_node]:
-            cost = dist + next_cost
-
-            if distance[next_node] > cost:
-                distance[next_node] = cost
-                heapq.heappush(queue, [cost, next_node])
-
-    return distance
-
-result = dijkstra(start_city)
+for _ in range(M):
+  src, dst = map(int, read().rstrip().split())
+  road[src].append(dst)
+  
 answer = []
 
-for i in range(1, v+1):
-    if result[i] == k:
-        answer.append(i)
+def bfs(start):
+  q = deque([(start, 0)])
+  visited[start] = True
+  
+  while q:
+    current_node, dist = q.popleft()
+    
+    if dist == K:
+      answer.append(current_node)
+    
+    for next_node in road[current_node]:
+      if not visited[next_node]:
+        q.append((next_node, dist + 1))
+        visited[next_node] = True
 
-if len(answer) == 0:
-    print(-1)
-else:
-    print(*answer, sep = '\n')
+bfs(X)
+answer = sorted(answer)    
+
+if len(answer) == 0: print(-1)
+else: print(*answer)
