@@ -8,12 +8,10 @@ read = sys.stdin.readline
 
 MAX = 500000
 
-def solution(start, K0):
-  if start == K0:
-    return 0
-  
+def solution(start, K0):  
   q = deque([start])
-  visited = [ [0] * (MAX + 1) for _ in range(2) ]
+  visited = [ [False] * (MAX + 1) for _ in range(2) ]
+  visited[0][start] = True
   time = 0
   
   while True:
@@ -23,7 +21,8 @@ def solution(start, K0):
     if K > MAX:
       return -1
     
-    if visited[time % 2][K] != 0:
+    # 이미 방문한적이 있는 좌표면 (2초 간격으로 제자리로 돌아올 수 있음)
+    if visited[time % 2][K]:
       return time
     
     time += 1
@@ -32,8 +31,8 @@ def solution(start, K0):
       current = q.popleft()
       
       for next in [current - 1, current + 1, 2 * current]:
-        if 0 <= next < MAX + 1 and visited[time % 2][next] == 0:
-          visited[time % 2][next] = time
+        if 0 <= next < MAX + 1 and not visited[time % 2][next]:
+          visited[time % 2][next] = True
           q.append(next)
 
 if __name__ == '__main__':
