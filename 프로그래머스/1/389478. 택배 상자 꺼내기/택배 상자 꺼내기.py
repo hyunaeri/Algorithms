@@ -1,42 +1,53 @@
-def removeBoxCalc(n, w, num):
-    storage = []
-    height = 0
-    currentBox = 1
+# 택배 상자 개수, 가로에 놓는 상자의 개수, 꺼내려는 택배 상자의 번호
+def solution(n, w, num):
     answer = 0
     
-    if (n % w == 0):
-        height = n // w
-    else:
-        height = n // w + 1
-
-    # 2차원 리스트(storage) 생성
-    for level in range(height):
-        currentLevel = []
-        for _ in range(w):
-            if currentBox <= n:
-                currentLevel.append(currentBox)
-                currentBox += 1
-            else:
-                currentLevel.append(0)
-
-        # 짝수 층: 그대로 저장
-        # 홀수 층: 뒤집어서 저장
-        if level % 2 == 0:
-            storage.append(currentLevel)
-        else:
-            currentLevel.reverse()
-            storage.append(currentLevel)
-
-    # 탐색
-    for i in range(len(storage)):
+    boxes = []
+    
+    # 1이면 그대로, -1이면 뒤집어서
+    parity = 1
+    row = []
+    
+    for i in range(1, n + 1):
+        row.append(i)
+        
+        if len(row) == w:
+            if parity == -1:
+                row.reverse()
+                
+            boxes.append(row)
+            row = []   
+            parity *= -1
+    
+    # 남은 택배 상자가 있다면
+    cnt = len(row)
+    
+    if cnt != 0:
+        for _ in range(w - cnt):
+            row.append(0)
+            
+        if parity == -1:
+            row.reverse()
+            
+        boxes.append(row)
+    
+    # for row in boxes:
+    #     print(row)
+    
+    target_row, target_col = 0, 0
+    done = False
+    
+    for i in range(len(boxes)):
         for j in range(w):
-            if storage[i][j] == num:
-                h = i
-                while h < height and storage[h][j]:
-                    answer += 1
-                    h += 1
-
+            if boxes[i][j] == num:
+                target_row, target_col = i, j
+                done = True
+                break
+        
+        if done : break
+        
+    for row in range(i, len(boxes)):
+        if boxes[row][j] != 0:
+            answer += 1
+                  
     return answer
-
-def solution(n, w, num):
-    return removeBoxCalc(n, w, num)
