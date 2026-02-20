@@ -11,7 +11,7 @@ select
         when r.colony_rank > 0.75 then 'LOW'
         when r.colony_rank > 0.5 then 'MEDIUM'
         when r.colony_rank > 0.25 then 'HIGH'
-        else 'CRITICAL'
+        when r.colony_rank >= 0 then 'CRITICAL'
     end as colony_name
 from ranking as r
 order by r.id asc;
